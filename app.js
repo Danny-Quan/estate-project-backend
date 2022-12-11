@@ -16,7 +16,8 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(helmet());
 app.use(
-  //http://hocalhost:3000
+  //http://localhost:3000
+  //https://estate-project-frontend.netlify.app
   cors({
     origin: ["https://estate-project-frontend.netlify.app"],
     credentials: true,
