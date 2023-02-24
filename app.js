@@ -19,7 +19,7 @@ app.use(
   //http://localhost:3000
   //https://estate-project-frontend.netlify.app
   cors({
-    origin: ["http://localhost:3000"],
+    origin: ["https://estate-project-frontend.netlify.app"],
     credentials: true,
   })
 );
