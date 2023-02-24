@@ -10,7 +10,7 @@ const DB = process.env.DATABASE_CONFIG.replace(
 );
 const localDB = process.env.LOCAL_DATABASE_CONFIG;
 mongoose
-  .connect(DB, {
+  .connect(localDB, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })

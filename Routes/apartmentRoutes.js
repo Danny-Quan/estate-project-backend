@@ -16,15 +16,15 @@ router.route("/adminApartments").get(apartmentController.showAdminApartments);
 router
   .route("/apartment")
   .post(
-    apartmentController.uploadApartmentImages,
-    apartmentController.resizeApartmentImages,
+    apartmentController.uploadPhoto,
+    // apartmentController.resizeApartmentImages,
     apartmentController.createApartment
   );
 router
   .route("/apartment/:id")
   .patch(
-    apartmentController.uploadApartmentImages,
-    apartmentController.resizeApartmentImages,
+    apartmentController.uploadPhoto,
+    // apartmentController.resizeApartmentImages,
     apartmentController.updateApartment
   );
 router.route("/apartment/:id").delete(apartmentController.deleteApartment);

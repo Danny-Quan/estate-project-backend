@@ -6,7 +6,7 @@ const { countDocuments } = require("./../Model/apartmentModel");
 const AppError = require("./../utils/appError");
 
 // //uploading single image with multer
-/*
+
 const multerStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "public/img/apartments");
@@ -31,10 +31,10 @@ const upload = multer({
   fileFilter: multerFilter,
 });
 exports.uploadPhoto = upload.single("coverPhoto");
-*/
 
 //uploading multiple images
 //UPLOADING IMAGES WITH MULTER
+/*
 const multiplemulterStorage = multer.memoryStorage();
 const multiplemulterFilter = (req, file, cb) => {
   if (file.mimetype.startsWith("image")) {
@@ -43,52 +43,53 @@ const multiplemulterFilter = (req, file, cb) => {
     cb(new AppError("Not an image! please upload only images", 400), false);
   }
 };
-const multipleupload = multer({
-  storage: multiplemulterStorage,
-  fileFilter: multiplemulterFilter,
-});
-exports.uploadApartmentImages = multipleupload.fields([
-  { name: "coverPhoto", maxCount: 1 },
-  { name: "images", maxCount: 3 },
-]);
-exports.resizeApartmentImages = async (req, res, next) => {
-  //console.log(req.files.coverPhoto)
-  //console.log(req.files.coverPhoto);
-  if (!req.files.coverPhoto || !req.files.images) return next();
-  if (!req.files.images) return next();
-  // console.log(req.files);
-  //1) COVER IMAGE
-  const imageCoverFilename = `apartment-${
-    res.user.id
-  }-${Date.now()}-cover.jpeg`;
-  await sharp(req.files.coverPhoto[0].buffer)
-    .resize(1750, 1200)
-    .toFormat("jpeg")
-    .jpeg({ quality: 90 })
-    .toFile(`public/img/apartments/${imageCoverFilename}`);
-  req.body.coverPhoto = imageCoverFilename;
+*/
 
-  // 2) IMAGES
-  req.body.images = [];
-  await Promise.all(
-    req.files.images.split(",").map(async (file, i) => {
-      const filename = `apartment-${res.user.id}-${Date.now()}-${i + 1}.jpeg`;
-      await sharp(file.buffer)
-        .resize(1920, 1200)
-        .toFormat("jpeg")
-        .jpeg({ quality: 90 })
-        .toFile(`public/img/apartments/${filename}`);
-      req.body.images.push(filename);
-    })
-  );
-  next();
-};
+// const multipleupload = multer({
+//   storage: multiplemulterStorage,
+//   fileFilter: multiplemulterFilter,
+// });
+// exports.uploadApartmentImages = multipleupload.fields([
+//   { name: "coverPhoto", maxCount: 1 },
+//   { name: "images", maxCount: 3 },
+// ]);
+// exports.resizeApartmentImages = async (req, res, next) => {
+//   //console.log(req.files.coverPhoto);
+//   if (!req.files.coverPhoto || !req.files.images) return next();
+//   if (!req.files.images) return next();
+//   // console.log(req.files);
+//   //1) COVER IMAGE
+//   const imageCoverFilename = `apartment-${
+//     res.user.id
+//   }-${Date.now()}-cover.jpeg`;
+//   await sharp(req.files.coverPhoto[0].buffer)
+//     .resize(1200, 1200)
+//     .toFormat("jpeg")
+//     .jpeg({ quality: 90 })
+//     .toFile(`public/img/apartments/${imageCoverFilename}`);
+//   req.body.coverPhoto = imageCoverFilename;
+
+//   // 2) IMAGES
+//   req.body.images = [];
+//   await Promise.all(
+//     req.files.images.split(",").map(async (file, i) => {
+//       const filename = `apartment-${res.user.id}-${Date.now()}-${i + 1}.jpeg`;
+//       await sharp(file.buffer)
+//         .resize(1200, 1200)
+//         .toFormat("jpeg")
+//         .jpeg({ quality: 90 })
+//         .toFile(`public/img/apartments/${filename}`);
+//       req.body.images.push(filename);
+//     })
+//   );
+//   next();
+// };
 
 exports.createApartment = async (req, res, next) => {
   try {
-    // if (req.files) {
-    //   req.body.coverPhoto = req.file.filename;
-    // }
+    if (req.file) {
+      req.body.coverPhoto = req.file.filename;
+    }
     console.log(req.body);
     const apartment = await Apartment.create({
       user: res.user.id,
@@ -205,7 +206,7 @@ exports.allApartments = async (req, res, next) => {
     )
       .filter()
       .sort()
-      .limitFields()
+      .limitFields();
     const count = await newFeatures.query.countDocuments();
     if (!apartments) return next(new AppError("no apartment found", 500));
     res.status(200).json({
